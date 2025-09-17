@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Rain Virus</title>
+  <script>
+    let spawnRate = 1000; // start langzaam
+    let acceleration = 0.95; // versnelt elke seconde
+
+    function createFallingPopup() {
+      const width = 100;
+      const height = 100;
+      let x = Math.floor(Math.random() * (screen.width - width));
+      let y = 0;
+
+      const win = window.open("", "", `width=${width},height=${height},left=${x},top=${y}`);
+      if (!win) return;
+
+      win.document.write(`
+        <body style="margin:0;background:black;">
+          <img src="regen.png" style="width:100%;height:100%;">
+        </body>
+      `);
+      win.document.title = "Rain Drop";
+
+      let speed = 5;
+      const fallInterval = setInterval(() => {
+        y += speed;
+        win.moveTo(x, y);
+        speed += 0.5; // versnelling
+
+        if (y > screen.height) {
+          clearInterval(fallInterval);
+          win.close();
+        }
+      }, 50);
+    }
+
+    function launchRain() {
+      setInterval(() => {
+        createFallingPopup();
+      }, spawnRate);
+
+      setInterval(() => {
+        spawnRate = Math.max(100, spawnRate * acceleration); // steeds sneller
+      }, 1000);
+    }
+
+    window.onload = () => {
+      // Start achtergrondgeluid
+      const audio = new Audio("regen.mp3");
+      audio.loop = true;
+      audio.volume = 0.5;
+      audio.play();
+
+      // Start regen na korte delay
+      setTimeout(launchRain, 1000);
+    };
+  </script>
+</head>
+<body>
+  <h1 style="text-align:center;">...</h1>
+</body>
+</html>
